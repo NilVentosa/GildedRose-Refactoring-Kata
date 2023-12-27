@@ -35,28 +35,20 @@ class GildedRose {
     }
 
     private void updateConjured(Item item) {
-        if (item.quality > 0) {
-            decreaseQualityBy(item, 2);
-        }
-
+        decreaseQualityBy(item, 2);
         decreaseSellIn(item);
 
-        if (item.sellIn < 0 && item.quality > 0) {
+        if (item.sellIn < 0) {
             decreaseQualityBy(item, 2);
         }
     }
 
     private void updateBrie(Item item) {
-        if (item.quality < MAX_QUALITY) {
-            increaseQuality(item);
-        }
-
+        increaseQuality(item);
         decreaseSellIn(item);
 
         if (item.sellIn < 0) {
-            if (item.quality < MAX_QUALITY) {
-                increaseQuality(item);
-            }
+            increaseQuality(item);
         }
     }
 
@@ -83,13 +75,16 @@ class GildedRose {
 
         decreaseSellIn(item);
 
-        if (item.sellIn < 0 && item.quality > 0) {
+        if (item.sellIn < 0 && item.quality > MIN_QUALITY) {
             decreaseQualityBy(item, 1);
         }
     }
 
     private void decreaseQualityBy(Item item, int amount) {
         item.quality -= amount;
+        if (item.quality < MIN_QUALITY) {
+            item.quality = MIN_QUALITY;
+        }
     }
 
     private void increaseQuality(Item item) {
@@ -98,7 +93,7 @@ class GildedRose {
 
     private void increaseQualityBy(Item item, int amount) {
         item.quality += amount;
-        if (item.quality >= MAX_QUALITY) {
+        if (item.quality > MAX_QUALITY) {
             item.quality = MAX_QUALITY;
         }
     }
