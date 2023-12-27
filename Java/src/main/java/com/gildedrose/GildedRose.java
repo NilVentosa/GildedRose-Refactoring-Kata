@@ -3,6 +3,9 @@ package com.gildedrose;
 import java.util.Arrays;
 
 class GildedRose {
+    private static final int MAX_QUALITY = 50;
+    private static final int MIN_QUALITY = 0;
+
     Item[] items;
 
     public GildedRose(Item[] items) {
@@ -33,63 +36,74 @@ class GildedRose {
 
     private void updateConjured(Item item) {
         if (item.quality > 0) {
-            item.quality-=2;
+            decreaseQualityBy(item, 2);
         }
 
-        item.sellIn--;
+        decreaseSellIn(item);
 
-        if (item.sellIn < 0) {
-            if (item.quality > 0) {
-                item.quality-=2;
-            }
+        if (item.sellIn < 0 && item.quality > 0) {
+            decreaseQualityBy(item, 2);
         }
     }
 
     private void updateBrie(Item item) {
-        if (item.quality < 50) {
-            item.quality++;
+        if (item.quality < MAX_QUALITY) {
+            increaseQuality(item);
         }
 
-        item.sellIn--;
+        decreaseSellIn(item);
 
         if (item.sellIn < 0) {
-            if (item.quality < 50) {
-                item.quality++;
+            if (item.quality < MAX_QUALITY) {
+                increaseQuality(item);
             }
         }
     }
 
     private void updateConcertTicket(Item item) {
-        if (item.quality < 50) {
-            item.quality++;
-
-            if (item.sellIn < 11) {
-                item.quality++;
-            }
-
-            if (item.sellIn < 6) {
-                item.quality++;
-            }
+        if (item.sellIn < 6) {
+            increaseQualityBy(item, 3);
+        } else if (item.sellIn < 11) {
+            increaseQualityBy(item, 2);
+        } else {
+            increaseQuality(item);
         }
 
-        item.sellIn--;
+        decreaseSellIn(item);
 
         if (item.sellIn < 0) {
-            item.quality = 0;
+            item.quality = MIN_QUALITY;
         }
     }
 
     private void updateDefault(Item item) {
         if (item.quality > 0) {
-            item.quality--;
+            decreaseQualityBy(item, 1);
         }
 
+        decreaseSellIn(item);
+
+        if (item.sellIn < 0 && item.quality > 0) {
+            decreaseQualityBy(item, 1);
+        }
+    }
+
+    private void decreaseQualityBy(Item item, int amount) {
+        item.quality -= amount;
+    }
+
+    private void increaseQuality(Item item) {
+        increaseQualityBy(item, 1);
+    }
+
+    private void increaseQualityBy(Item item, int amount) {
+        item.quality += amount;
+        if (item.quality >= MAX_QUALITY) {
+            item.quality = MAX_QUALITY;
+        }
+    }
+
+    private void decreaseSellIn(Item item) {
         item.sellIn--;
-
-        if (item.sellIn < 0) {
-            if (item.quality > 0) {
-                item.quality--;
-            }
-        }
     }
 }
